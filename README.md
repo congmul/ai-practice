@@ -1,1 +1,1 @@
-# ai-practice
+# Generative AI
