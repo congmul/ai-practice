@@ -26,7 +26,7 @@ model = AzureChatOpenAI(
 
 messages = [
     SystemMessage("Translate the following from English into Korean"),
-    HumanMessage("hi!"),
+    HumanMessage("Hi!"),
 ]
 response = model.invoke(messages)
 print(response.content)
