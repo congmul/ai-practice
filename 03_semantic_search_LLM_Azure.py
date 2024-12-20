@@ -1,7 +1,10 @@
 from langchain_core.documents import Document
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+# For openAI
 from langchain_openai import OpenAIEmbeddings
+# For Azure
+from langchain_openai import AzureOpenAIEmbeddings
 from dotenv import load_dotenv
 import os
 from langchain_core.vectorstores import InMemoryVectorStore
@@ -39,13 +42,24 @@ text_splitter = RecursiveCharacterTextSplitter(
 all_splits = text_splitter.split_documents(docs)
 print(f"len(all_splits): {len(all_splits)}")
 
-embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+# embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
 # vector_1 = embeddings.embed_query(all_splits[0].page_content)
 # vector_2 = embeddings.embed_query(all_splits[1].page_content)
 
 # assert len(vector_1) == len(vector_2)
 # print(f"Generated vectors of length {len(vector_1)}\n")
 # print(vector_1[:10])
+
+# In Azure case, need to build(deploy) Embedding model separately
+# model name is "text-embedding-ada-002" or anything you want.
+embeddings = AzureOpenAIEmbeddings(azure_endpoint=os.environ.get('AZURE_EMBEDDING_ENDPOINT'))
+print(f"embeddings: {embeddings}")
+vector_1 = embeddings.embed_query(all_splits[0].page_content)
+vector_2 = embeddings.embed_query(all_splits[1].page_content)
+
+assert len(vector_1) == len(vector_2)
+print(f"Generated vectors of length {len(vector_1)}\n")
+print(vector_1[:10])
 
 vector_store = InMemoryVectorStore(embeddings)
 ids = vector_store.add_documents(documents=all_splits)
